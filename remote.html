@@ -1,0 +1,72 @@
+<html><head><title>Remote Controller</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Include jQuery Mobile stylesheets -->
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<link rel="manifest" href="/manifest.json">
+<style>
+.ui-mobile label{
+display:inline;
+}
+</style>
+</head>
+<body>
+    <script src="http://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<!-- Include the jQuery Mobile library -->
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script>
+      var socket = io();
+	  var buttonHold;
+$(document).ready(function() {
+      $('button').on("mousedown",function(e){
+        socket.emit('remotePress', {key:e.target.name});
+		$(e.target).addClass("ui-btn-active");
+		/*buttonHold = setInterval(function(){
+			socket.emit('remotePress', {key:e.target.name});
+		},250);
+		$('button').on("mouseup",function(e){
+			clearTimeout(buttonHold);
+		socket.emit('remoteRelease', {key:e.target.name});
+			});
+			*/
+	//console.log(e)
+      });
+
+      socket.on('remoteReply', function(key){
+        console.log(key);
+		$(document.getElementsByName(key)).removeClass("ui-btn-active")
+      });
+
+});
+    </script>
+<div data-role="page">
+<div><span style="float:left;width:50%"><button name="auxPwr" style="background-color:red">Receiver Power</button></span><span style="float:right;width:50%"><button name="tvPwr" style="background-color:red">TV Power</button></span></div>
+<div>
+<span style="float:left;width:50%"><button name="mute">Mute</button><button name="volUp">Vol +</button><button name="volDown">Vol -</button></span>
+<span style="float:right;width:50%"><button name="tvSrc">TV Source</button><button name="chUp">Ch +</button><button name="chDown">Ch -</button></span>
+</div>
+<div>
+<span style="float:left;width:33%;display:inline-block"><button name="tv1">1</button><button name="tv4">4</button><button name="tv7">7</button><button name="tv100">-</button></span>
+<span style="width:33%;display:inline-block"><button name="tv2">2</button><button name="tv5">5</button><button name="tv8">8</button><button name="tv0">0</button></span>
+<span style="float:right;width:33%;display:inline-block"><button name="tv3">3</button><button name="tv6">6</button><button name="tv9">9</button><button name="tvPrevCh">Prev Ch</button></span>
+</div>
+<hr>
+<div>
+<span style="float:left;width:50%"><button name="tunerMode">Tuner</button><button name="cdMode">Java</button><button name="DVDMode">DVD/PS2</button></span>
+<span style="float:right;width:50%"><button name="tvMode">TV</button><button name="VCRMode">Wii</button><button name="VidMode">Video Mode</button></span>
+</div>
+<a href="#radioPanel" class="ui-btn">Radio Tuner</a>
+<div data-role="panel" data-display="overlay" data-position="right" id="radioPanel">
+<button name="auxChUp">Radio Ch +</button>
+<button name="auxChDown">Radio Ch -</button>
+<div>
+<span style="float:left;width:33%;display:inline-block"><button name="tuner01">1</button><button name="tuner4">4</button><button name="tuner7">7</button><button name="tuner10">10</button></span>
+<span style="width:33%;display:inline-block"><button name="tuner02">2</button><button name="tuner5">5</button><button name="tuner8">8</button><button name="tuner11">11</button></span>
+<span style="float:right;width:33%;display:inline-block"><button name="tuner03">3</button><button name="tuner6">6</button><button name="tuner9">9</button><button name="tuner12">12</button></span>
+</div>
+<span style="float:left;width:50%"><button name="auxTuneDown">Mhz-</button></span><span style="float:right;width:50%"><button name="auxTuneUp">Mhz+</button></span>
+</div>
+</div>
+  </body>
+</html>
