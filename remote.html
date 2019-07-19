@@ -4,17 +4,24 @@
 <!-- Include jQuery Mobile stylesheets -->
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
 <link rel="manifest" href="/manifest.json">
+<link rel="stylesheet" href="http://192.168.2.1:8080/spin_knob/knob.css">
 <style>
+#spin{height:300px;width:300px;margin-left:auto;margin-right:auto;}
 .ui-mobile label{
 display:inline;
 }
+.ui-btn{
+background:linear-gradient(rgba(158, 158, 158, 0.32),rgba(30,30,30,.5));
+}
+#dial{background:radial-gradient(circle, rgba(158, 158, 158, 0.32),rgba(30,30,30,.5));}
 </style>
 </head>
 <body>
-    <script src="http://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 	<!-- Include the jQuery Mobile library -->
 <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="http://192.168.2.1:8080/spin_knob/knob.js"></script>
     <script>
       var socket = io();
 	  var buttonHold;
@@ -35,16 +42,21 @@ $(document).ready(function() {
 
       socket.on('remoteReply', function(key){
         console.log(key);
-		$(document.getElementsByName(key)).removeClass("ui-btn-active")
+		volumeQueue.shift();
+		volSpin();
+		$(document.getElementsByName(key)).removeClass("ui-btn-active");
       });
 
 });
     </script>
-<div data-role="page">
-<div><span style="float:left;width:50%"><button name="auxPwr" style="background-color:red">Receiver Power</button></span><span style="float:right;width:50%"><button name="tvPwr" style="background-color:red">TV Power</button></span></div>
+<div data-role="page" style="background-color:lightgray">
+<div style="height:4em"><span style="float:left;width:50%"><button name="auxPwr" style="background-color:red;color:lightgray;text-shadow:none">Receiver Power</button></span><span style="float:right;width:50%"><button name="tvPwr" style="background-color:red;color:lightgray;text-shadow:none">TV Power</button></span></div>
+<div style="height:4em"><span style="float:left;width:50%"><button name="mute">Mute</button></span><span style="float:right;width:50%"><button name="tvSrc">TV Source</button></span></div>
+<div id="spin">
+</div>
 <div>
-<span style="float:left;width:50%"><button name="mute">Mute</button><button name="volUp">Vol +</button><button name="volDown">Vol -</button></span>
-<span style="float:right;width:50%"><button name="tvSrc">TV Source</button><button name="chUp">Ch +</button><button name="chDown">Ch -</button></span>
+<span style="float:left;width:50%"><button name="volUp">Vol +</button><button name="volDown">Vol -</button></span>
+<span style="float:right;width:50%"><button name="chUp">Ch +</button><button name="chDown">Ch -</button></span>
 </div>
 <div>
 <span style="float:left;width:33%;display:inline-block"><button name="tv1">1</button><button name="tv4">4</button><button name="tv7">7</button><button name="tv100">-</button></span>
@@ -53,10 +65,9 @@ $(document).ready(function() {
 </div>
 <hr>
 <div>
-<span style="float:left;width:50%"><button name="tunerMode">Tuner</button><button name="cdMode">Java</button><button name="DVDMode">DVD/PS2</button></span>
-<span style="float:right;width:50%"><button name="tvMode">TV</button><button name="VCRMode">Wii</button><button name="VidMode">Video Mode</button></span>
+<span style="float:left;width:50%"><button name="tunerMode">Tuner</button><button name="netMode">Java</button><button name="cdMode">DVD/PS2/Wii</button></span>
+<span style="float:right;width:50%"><button name="tvMode">TV</button><button name="btMode">Bluetooth</button><a href="#radioPanel" class="ui-btn">Radio Tuner</a></span>
 </div>
-<a href="#radioPanel" class="ui-btn">Radio Tuner</a>
 <div data-role="panel" data-display="overlay" data-position="right" id="radioPanel">
 <button name="auxChUp">Radio Ch +</button>
 <button name="auxChDown">Radio Ch -</button>
@@ -66,7 +77,36 @@ $(document).ready(function() {
 <span style="float:right;width:33%;display:inline-block"><button name="tuner03">3</button><button name="tuner6">6</button><button name="tuner9">9</button><button name="tuner12">12</button></span>
 </div>
 <span style="float:left;width:50%"><button name="auxTuneDown">Mhz-</button></span><span style="float:right;width:50%"><button name="auxTuneUp">Mhz+</button></span>
+<span style="width:100%"><button name="menu-memset" style="background-color:red;color:lightgray;text-shadow:none">Set Preset</button></span>
 </div>
 </div>
+<script>
+var volumeQueue = []
+function volSpin() {
+	console.log(volumeQueue)
+		if(volumeQueue[0] == 1)
+		{
+			socket.emit('remotePress', {key:'volUp'});
+		}
+		if(volumeQueue[0] == -1)
+		{
+			socket.emit('remotePress', {key:'volDown'});
+		}
+	}
+$(document).ready(function(){
+function increment()
+{
+	volumeQueue.push(1)
+	volSpin()
+}
+function decrement()
+{
+	volumeQueue.push(-1)
+	volSpin()
+}
+
+var dialWidget = new volumeKnob("spin",8,function(){increment()},function(){decrement()})
+});
+</script>
   </body>
 </html>

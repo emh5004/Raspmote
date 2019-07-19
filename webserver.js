@@ -1,4 +1,7 @@
 var app = require('express')();
+var bodyParser = require('body-parser');
+var cors = require('cors')
+app.use(bodyParser.json());
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var fs = require("fs");
@@ -36,7 +39,19 @@ app.get('/*', function(req, res) {
 			res.sendFile(path.join(__dirname,"remote.html"));
 	}
 });
-
+app.options('/command', cors())
+app.post('/command', cors(), function(req,res){
+	console.log(req.body);
+	for(var x = 0; x< req.body.length; x++)
+	{
+		lookupCommand(req.body[x], function(command){
+			execute(command,function(error, stdout, stderr){
+				console.log(error + " " + stdout + " " + stderr);
+			});
+		});
+	}
+	res.json(req.body)
+})
 //	app.get('/remote', function(req, res) {
 	//	res.sendFile("remote.html");
 		//});

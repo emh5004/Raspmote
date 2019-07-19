@@ -1,0 +1,28 @@
+{
+  "name": "raspmote",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webserver.js",
+  "dependencies": {
+    "socket.io": "^2.1.1",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.4",
+    "jquery": "^3.3.1",
+    "jquery-mobile": "^1.5.0-alpha.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emh5004/Raspmote.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emh5004/Raspmote/issues"
+  },
+  "homepage": "https://github.com/emh5004/Raspmote#readme"
+}
